@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animated Minimalist Background</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="background"></canvas>
+
+    <script>
+        const canvas = document.getElementById('background');
+        const context = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const lineCount = 100;
+        const lineSpeed = 2;
+        const lineWidth = 1;
+        const lineColor = '#000000';
+
+        const lines = [];
+
+        class Line {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.angle = Math.random() * 2 * Math.PI;
+            }
+
+            update() {
+                this.x += Math.cos(this.angle) * lineSpeed;
+                this.y += Math.sin(this.angle) * lineSpeed;
+
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.angle = Math.random() * 2 * Math.PI;
+                }
+            }
+
+            draw() {
+                context.beginPath();
+                context.moveTo(this.x, this.y);
+                context.lineTo(this.x + Math.cos(this.angle) * lineWidth, this.y + Math.sin(this.angle) * lineWidth);
+                context.strokeStyle = lineColor;
+                context.lineWidth = lineWidth;
+                context.stroke();
+            }
+        }
+
+        function createLines() {
+            for (let i = 0; i < lineCount; i++) {
+                lines.push(new Line());
+            }
+        }
+
+        function updateLines() {
+            for (let i = 0; i < lines.length; i++) {
+                lines[i].update();
+            }
+        }
+
+        function drawLines() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < lines.length; i++) {
+                lines[i].draw();
+            }
+        }
+
+        function loop() {
+            updateLines();
+            drawLines();
+
+            requestAnimationFrame(loop);
+        }
+
+        createLines();
+        loop();
+    </script>
+</body>
+</html>
